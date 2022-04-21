@@ -1,22 +1,35 @@
 {
-    "compilerOptions": {
-        "target": "es5",
-        "module": "CommonJS",
-        "outDir": "dist",
-        "alwaysStrict": true,
-        "sourceMap": true,
-        "noImplicitAny": true,
-        "moduleResolution": "node",
-        "declaration": true,
-        "downlevelIteration": true,
-        "skipLibCheck": true,
-        "lib": [
-            "es2017",
-            "dom"
-        ]
-    },
-    "include": [
-        "src/**/*.ts",
-        "src/**/*.js"
-    ]
+	"compileOnSave": true,
+	"compilerOptions": {
+		"module": "commonjs",
+		"target": "ES2018",
+		"moduleResolution": "node",
+		"sourceMap": false,
+		"outDir": "out/zswjs",
+		"rootDir": ".",
+		"baseUrl": ".",
+		"declaration": true,
+		"alwaysStrict": true,
+		"allowJs": true,
+		"checkJs": false,
+		"strict": true,
+		"noImplicitAny": true,
+		"noImplicitThis": true,
+		"strictNullChecks": true,
+		"strictPropertyInitialization": true,
+		"emitDecoratorMetadata": false,
+		"experimentalDecorators": true,
+		"removeComments": true,
+		"resolveJsonModule": true,
+	},
+	"include": [
+		"src/*",
+		"src/*/**",
+	],
+	"exclude": [
+		"out",
+		"var",
+		".git",
+		"node_modules",
+	]
 }

@@ -682,11 +682,11 @@ export const hexToUint8Array = (hex: string): Uint8Array => {
     return result;
 };
 
-function serializeUnknown(buffer: SerialBuffer, data: any): SerialBuffer {
+function serializeUnknown(this: any, buffer: SerialBuffer, data: any): SerialBuffer {
     throw new Error('Don\'t know how to serialize ' + this.name);
 }
 
-function deserializeUnknown(buffer: SerialBuffer): SerialBuffer {
+function deserializeUnknown(this: any, buffer: SerialBuffer): SerialBuffer {
     throw new Error('Don\'t know how to deserialize ' + this.name);
 }
 
@@ -796,11 +796,11 @@ function deserializeOptional(this: Type, buffer: SerialBuffer, state?: Serialize
 function serializeExtension(
     this: Type, buffer: SerialBuffer, data: any, state?: SerializerState, allowExtensions?: boolean
 ): void {
-    this.extensionOf.serialize(buffer, data, state, allowExtensions);
+    this.extensionOf!.serialize(buffer, data, state, allowExtensions);
 }
 
 function deserializeExtension(this: Type, buffer: SerialBuffer, state?: SerializerState, allowExtensions?: boolean): any {
-    return this.extensionOf.deserialize(buffer, state, allowExtensions);
+    return this.extensionOf!.deserialize(buffer, state, allowExtensions);
 }
 
 function serializeObject(
@@ -874,7 +874,7 @@ const createType = (attrs: CreateTypeArgs): Type => {
         serialize: serializeUnknown,
         deserialize: deserializeUnknown,
         ...attrs,
-    };
+    } as Type;
 };
 
 const checkRange = (orig: number, converted: number): number => {
@@ -1077,7 +1077,7 @@ export const createInitialTypes = (): Map<string, Type> => {
         fields: [
             { name: 'quantity', typeName: 'asset', type: result.get('asset') },
             { name: 'contract', typeName: 'name', type: result.get('name') },
-        ],
+        ] as any[],
         serialize: serializeStruct,
         deserialize: deserializeStruct,
     }));
@@ -1093,7 +1093,7 @@ export const createAbiTypes = (): Map<string, Type> => {
         fields: [
             { name: 'tag', typeName: 'uint16', type: null },
             { name: 'value', typeName: 'bytes', type: null }
-        ],
+        ] as any[],
         serialize: serializeStruct,
         deserialize: deserializeStruct,
     }));
@@ -1103,7 +1103,7 @@ export const createAbiTypes = (): Map<string, Type> => {
         fields: [
             { name: 'new_type_name', typeName: 'string', type: null },
             { name: 'type', typeName: 'string', type: null }
-        ],
+        ] as any[],
         serialize: serializeStruct,
         deserialize: deserializeStruct,
     }));
@@ -1113,7 +1113,7 @@ export const createAbiTypes = (): Map<string, Type> => {
         fields: [
             { name: 'name', typeName: 'string', type: null },
             { name: 'type', typeName: 'string', type: null }
-        ],
+        ] as any[],
         serialize: serializeStruct,
         deserialize: deserializeStruct,
     }));
@@ -1124,7 +1124,7 @@ export const createAbiTypes = (): Map<string, Type> => {
             { name: 'name', typeName: 'string', type: null },
             { name: 'base', typeName: 'string', type: null },
             { name: 'fields', typeName: 'field_def[]', type: null }
-        ],
+        ] as any[],
         serialize: serializeStruct,
         deserialize: deserializeStruct,
     }));
@@ -1135,7 +1135,7 @@ export const createAbiTypes = (): Map<string, Type> => {
             { name: 'name', typeName: 'name', type: null },
             { name: 'type', typeName: 'string', type: null },
             { name: 'ricardian_contract', typeName: 'string', type: null }
-        ],
+        ] as any[],
         serialize: serializeStruct,
         deserialize: deserializeStruct,
     }));
@@ -1148,7 +1148,7 @@ export const createAbiTypes = (): Map<string, Type> => {
             { name: 'key_names', typeName: 'string[]', type: null },
             { name: 'key_types', typeName: 'string[]', type: null },
             { name: 'type', typeName: 'string', type: null }
-        ],
+        ] as any[],
         serialize: serializeStruct,
         deserialize: deserializeStruct,
     }));
@@ -1158,7 +1158,7 @@ export const createAbiTypes = (): Map<string, Type> => {
         fields: [
             { name: 'id', typeName: 'string', type: null },
             { name: 'body', typeName: 'string', type: null }
-        ],
+        ] as any[],
         serialize: serializeStruct,
         deserialize: deserializeStruct,
     }));
@@ -1168,7 +1168,7 @@ export const createAbiTypes = (): Map<string, Type> => {
         fields: [
             { name: 'error_code', typeName: 'uint64', type: null },
             { name: 'error_msg', typeName: 'string', type: null }
-        ],
+        ] as any[],
         serialize: serializeStruct,
         deserialize: deserializeStruct,
     }));
@@ -1178,7 +1178,7 @@ export const createAbiTypes = (): Map<string, Type> => {
         fields: [
             { name: 'name', typeName: 'string', type: null },
             { name: 'types', typeName: 'string[]', type: null }
-        ],
+        ] as any[],
         serialize: serializeStruct,
         deserialize: deserializeStruct,
     }));
@@ -1188,7 +1188,7 @@ export const createAbiTypes = (): Map<string, Type> => {
         fields: [
             { name: 'name', typeName: 'name', type: null },
             { name: 'result_type', typeName: 'string', type: null }
-        ],
+        ] as any[],
         serialize: serializeStruct,
         deserialize: deserializeStruct,
     }));
@@ -1198,7 +1198,7 @@ export const createAbiTypes = (): Map<string, Type> => {
         fields: [
             { name: 'name', typeName: 'name', type: null },
             { name: 'type', typeName: 'string', type: null }
-        ],
+        ] as any[],
         serialize: serializeStruct,
         deserialize: deserializeStruct,
     }));
@@ -1207,7 +1207,7 @@ export const createAbiTypes = (): Map<string, Type> => {
         baseName: '',
         fields: [
             { name: 'type', typeName: 'string', type: null },
-        ],
+        ] as any[],
         serialize: serializeStruct,
         deserialize: deserializeStruct,
     }));
@@ -1217,7 +1217,7 @@ export const createAbiTypes = (): Map<string, Type> => {
         fields: [
             { name: 'name', typeName: 'name', type: null },
             { name: 'secondary_index_def', typeName: 'secondary_index_def', type: null }
-        ],
+        ] as any[],
         serialize: serializeObject,
         deserialize: deserializeObject,
     }));
@@ -1228,7 +1228,7 @@ export const createAbiTypes = (): Map<string, Type> => {
             { name: 'type', typeName: 'string', type: null },
             { name: 'primary_index', typeName: 'primary_key_index_def', type: null },
             { name: 'secondary_indices', typeName: 'secondary_indices', type: null }
-        ],
+        ] as any[],
         serialize: serializeStruct,
         deserialize: deserializeStruct,
     }));
@@ -1238,7 +1238,7 @@ export const createAbiTypes = (): Map<string, Type> => {
         fields: [
             { name: 'name', typeName: 'name', type: null },
             { name: 'kv_table_entry_def', typeName: 'kv_table_entry_def', type: null }
-        ],
+        ] as any[],
         serialize: serializeObject,
         deserialize: deserializeObject
     }));
@@ -1257,7 +1257,7 @@ export const createAbiTypes = (): Map<string, Type> => {
             { name: 'variants', typeName: 'variant_def[]$', type: null },
             { name: 'action_results', typeName: 'action_result[]$', type: null },
             { name: 'kv_tables', typeName: 'kv_table$', type: null },
-        ],
+        ] as any[],
         serialize: serializeStruct,
         deserialize: deserializeStruct,
     }));
@@ -1274,7 +1274,7 @@ export const createTransactionExtensionTypes = (): Map<string, Type> => {
             { name: 'max_net_bytes', typeName: 'uint64', type: null },
             { name: 'max_cpu_us', typeName: 'uint64', type: null },
             { name: 'max_memory_bytes', typeName: 'uint64', type: null },
-        ],
+        ] as any[],
         serialize: serializeStruct,
         deserialize: deserializeStruct,
     }));
@@ -1289,7 +1289,7 @@ export const createTransactionTypes = (): Map<string, Type> => {
         fields: [
             { name: 'actor', typeName: 'name', type: null },
             { name: 'permission', typeName: 'name', type: null },
-        ],
+        ] as any[],
         serialize: serializeStruct,
         deserialize: deserializeStruct,
     }));
@@ -1301,7 +1301,7 @@ export const createTransactionTypes = (): Map<string, Type> => {
             { name: 'name', typeName: 'name', type: null },
             { name: 'authorization', typeName: 'permission_level[]', type: null },
             { name: 'data', typeName: 'bytes', type: null },
-        ],
+        ] as any[],
         serialize: serializeStruct,
         deserialize: deserializeStruct,
     }));
@@ -1311,7 +1311,7 @@ export const createTransactionTypes = (): Map<string, Type> => {
         fields: [
             { name: 'type', typeName: 'uint16', type: null },
             { name: 'data', typeName: 'bytes', type: null },
-        ],
+        ] as any[],
         serialize: serializePair,
         deserialize: deserializePair,
     }));
@@ -1325,7 +1325,7 @@ export const createTransactionTypes = (): Map<string, Type> => {
             { name: 'max_net_usage_words', typeName: 'varuint32', type: null },
             { name: 'max_cpu_usage_ms', typeName: 'uint8', type: null },
             { name: 'delay_sec', typeName: 'varuint32', type: null },
-        ],
+        ] as any[],
         serialize: serializeStruct,
         deserialize: deserializeStruct,
     }));
@@ -1336,7 +1336,7 @@ export const createTransactionTypes = (): Map<string, Type> => {
             { name: 'context_free_actions', typeName: 'action[]', type: null },
             { name: 'actions', typeName: 'action[]', type: null },
             { name: 'transaction_extensions', typeName: 'extension', type: null }
-        ],
+        ] as any[],
         serialize: serializeStruct,
         deserialize: deserializeStruct,
     }));
@@ -1398,7 +1398,7 @@ export const getTypesFromAbi = (initialTypes: Map<string, Type>, abi?: Abi): Map
             types.set(name, createType({
                 name,
                 baseName: base,
-                fields: fields.map(({ name: n, type }) => ({ name: n, typeName: type, type: null })),
+                fields: fields.map(({ name: n, type }) => ({ name: n, typeName: type, type: null })) as any[],
                 serialize: serializeStruct,
                 deserialize: deserializeStruct,
             }));
@@ -1408,7 +1408,7 @@ export const getTypesFromAbi = (initialTypes: Map<string, Type>, abi?: Abi): Map
         for (const { name, types: t } of abi.variants) {
             types.set(name, createType({
                 name,
-                fields: t.map((s) => ({ name: s, typeName: s, type: null })),
+                fields: t.map((s) => ({ name: s, typeName: s, type: null })) as any[],
                 serialize: serializeVariant,
                 deserialize: deserializeVariant,
             }));
@@ -1435,7 +1435,7 @@ export const transactionHeader = (refBlock: BlockTaposInfo, expireSeconds: numbe
     const prefix = parseInt(reverseHex(refBlock.id.substr(16, 8)), 16);
 
     return {
-        expiration: timePointSecToDate(dateToTimePointSec(timestamp) + expireSeconds),
+        expiration: timePointSecToDate(dateToTimePointSec(timestamp!) + expireSeconds),
         ref_block_num: refBlock.block_num & 0xffff,
         ref_block_prefix: prefix,
     };
@@ -1501,19 +1501,19 @@ export const serializeAnyvar = (buffer: SerialBuffer, anyvar: Anyvar): void => {
     let def: AnyvarDef;
     let value: any;
     if (anyvar === null) {
-        [def, value] = [anyvarDefs.null_t, anyvar];
+        [def, value] = [anyvarDefs.null_t as any, anyvar];
     } else if (typeof anyvar === 'string') {
-        [def, value] = [anyvarDefs.string, anyvar];
+        [def, value] = [anyvarDefs.string as any, anyvar];
     } else if (typeof anyvar === 'number') {
-        [def, value] = [anyvarDefs.int32, anyvar];
+        [def, value] = [anyvarDefs.int32 as any, anyvar];
     } else if (anyvar instanceof Uint8Array) {
-        [def, value] = [anyvarDefs.bytes, anyvar];
+        [def, value] = [anyvarDefs.bytes as any, anyvar];
     } else if (Array.isArray(anyvar)) {
-        [def, value] = [anyvarDefs.any_array, anyvar];
+        [def, value] = [anyvarDefs.any_array as any, anyvar];
     } else if (Object.keys(anyvar).length === 2 && anyvar.hasOwnProperty('type') && anyvar.hasOwnProperty('value')) {
         [def, value] = [(anyvarDefs as any)[(anyvar as any).type] as AnyvarDef, (anyvar as any).value];
     } else {
-        [def, value] = [anyvarDefs.any_object, anyvar];
+        [def, value] = [anyvarDefs.any_object as any, anyvar];
     }
     buffer.pushVaruint32(def.index);
     def.type.serialize(buffer, value);
@@ -1525,11 +1525,11 @@ export const deserializeAnyvar = (buffer: SerialBuffer, state?: SerializerState)
         throw new Error('Tried to deserialize unknown anyvar type');
     }
     const def = anyvarDefsByIndex[defIndex];
-    const value = def.type.deserialize(buffer, state);
+    const value = def.type!.deserialize(buffer, state);
     if (state && (state.options as any).useShortForm || def.useShortForm) {
         return value;
     } else {
-        return { type: def.type.name, value };
+        return { type: def.type!.name, value };
     }
 };
 
@@ -1656,18 +1656,18 @@ export const serializeQuery = (buffer: SerialBuffer, query: Query): void => {
     } else if (Array.isArray(query) && query.length === 3) {
         [method, arg, filter] = query;
     } else {
-        [method, arg, filter] = [query.method, query.arg, query.filter];
+        [method, arg, filter] = [query.method, query.arg!, query.filter!];
     }
     buffer.pushString(method);
 
-    if (arg === undefined) {
+    if (arg! === undefined) {
         buffer.push(0);
     } else {
         buffer.push(1);
         serializeAnyvar(buffer, arg);
     }
 
-    if (filter === undefined) {
+    if (filter! === undefined) {
         buffer.push(0);
     } else {
         buffer.pushVaruint32(filter.length);

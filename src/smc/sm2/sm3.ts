@@ -197,7 +197,7 @@ function main(array: any) {
       lenArr[i] = 0
     }
   }
-  const m = [].concat(array, [0x80], kArr, lenArr)
+  const m = ([] as number[]).concat(array, [0x80], kArr, lenArr)
 
   // 迭代压缩
   const n = m.length / 64

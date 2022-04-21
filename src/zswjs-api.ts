@@ -87,9 +87,9 @@ export class Api {
         this.authorityProvider = args.authorityProvider || args.rpc;
         this.abiProvider = args.abiProvider || args.rpc;
         this.signatureProvider = args.signatureProvider;
-        this.chainId = args.chainId;
-        this.textEncoder = args.textEncoder;
-        this.textDecoder = args.textDecoder;
+        this.chainId = args.chainId!;
+        this.textEncoder = args.textEncoder!;
+        this.textDecoder = args.textDecoder!;
 
         this.abiTypes = ser.getTypesFromAbi(ser.createAbiTypes());
         this.transactionTypes = ser.getTypesFromAbi(ser.createTransactionTypes());
@@ -106,7 +106,7 @@ export class Api {
             throw new Error('Unsupported abi version');
         }
         buffer.restartRead();
-        return this.abiTypes.get('abi_def').deserialize(buffer);
+        return this.abiTypes.get('abi_def')!.deserialize(buffer);
     }
 
     /** Encodes a json abi as Uint8Array. */
@@ -115,7 +115,7 @@ export class Api {
             textEncoder: this.textEncoder,
             textDecoder: this.textDecoder,
         });
-        this.abiTypes.get('abi_def').serialize(buffer, jsonAbi);
+        this.abiTypes.get('abi_def')!.serialize(buffer, jsonAbi);
         if (!ser.supportedAbiVersion(buffer.getString())) {
             throw new Error('Unsupported abi version');
         }
@@ -125,14 +125,14 @@ export class Api {
     /** Get abi in both binary and structured forms. Fetch when needed. */
     public async getCachedAbi(accountName: string, reload = false): Promise<CachedAbi> {
         if (!reload && this.cachedAbis.get(accountName)) {
-            return this.cachedAbis.get(accountName);
+            return this.cachedAbis.get(accountName)!;
         }
         let cachedAbi: CachedAbi;
         try {
             const rawAbi = (await this.abiProvider.getRawAbi(accountName)).abi;
             const abi = this.rawAbiToJson(rawAbi);
             cachedAbi = { rawAbi, abi };
-        } catch (e) {
+        } catch (e: any) {
             e.message = `fetching abi for ${accountName}: ${e.message}`;
             throw e;
         }
@@ -163,7 +163,7 @@ export class Api {
     /** Get data needed to serialize actions in a contract */
     public async getContract(accountName: string, reload = false): Promise<ser.Contract> {
         if (!reload && this.contracts.get(accountName)) {
-            return this.contracts.get(accountName);
+            return this.contracts.get(accountName)!;
         }
         const abi = await this.getAbi(accountName, reload);
         const types = ser.getTypesFromAbi(ser.createInitialTypes(), abi);
@@ -178,12 +178,12 @@ export class Api {
 
     /** Convert `value` to binary form. `type` must be a built-in abi type or in `transaction.abi.json`. */
     public serialize(buffer: ser.SerialBuffer, type: string, value: any): void {
-        this.transactionTypes.get(type).serialize(buffer, value);
+        this.transactionTypes.get(type)!.serialize(buffer, value);
     }
 
     /** Convert data in `buffer` to structured form. `type` must be a built-in abi type or in `transaction.abi.json`. */
     public deserialize(buffer: ser.SerialBuffer, type: string): any {
-        return this.transactionTypes.get(type).deserialize(buffer);
+        return this.transactionTypes.get(type)!.deserialize(buffer);
     }
 
     /** Convert a transaction to binary */
@@ -196,7 +196,7 @@ export class Api {
             context_free_actions: [],
             actions: [],
             transaction_extensions: [],
-            ...transaction,
+            ...(transaction as any),
         });
         return buffer.asUint8Array();
     }
@@ -204,7 +204,7 @@ export class Api {
     /** Serialize context-free data */
     public serializeContextFreeData(contextFreeData: Uint8Array[]): Uint8Array {
         if (!contextFreeData || !contextFreeData.length) {
-            return null;
+            return null!;
         }
         const buffer = new ser.SerialBuffer({ textEncoder: this.textEncoder, textDecoder: this.textDecoder });
         buffer.pushVaruint32(contextFreeData.length);
@@ -231,7 +231,7 @@ export class Api {
         if (transaction.resource_payer) {
             const extensionBuffer = new ser.SerialBuffer({ textEncoder: this.textEncoder, textDecoder: this.textDecoder });
             const types = ser.getTypesFromAbi(ser.createTransactionExtensionTypes());
-            types.get('resource_payer').serialize(extensionBuffer, transaction.resource_payer);
+            types.get('resource_payer')!.serialize(extensionBuffer, transaction.resource_payer);
             transaction_extensions = [...transaction_extensions, [1, ser.arrayToHex(extensionBuffer.asUint8Array())]];
         }
         return transaction_extensions;
@@ -248,7 +248,7 @@ export class Api {
             const types = ser.getTypesFromAbi(ser.createTransactionExtensionTypes());
             const extensionBuffer = new ser.SerialBuffer({ textEncoder: this.textEncoder, textDecoder: this.textDecoder });
             extensionBuffer.pushArray(ser.hexToUint8Array(extensionData[1]));
-            const deserializedObj = types.get(transactionExtension.type).deserialize(extensionBuffer);
+            const deserializedObj = types.get(transactionExtension.type)!.deserialize(extensionBuffer);
             if (extensionData[0] === 1) {
                 deserializedObj.max_net_bytes = Number(deserializedObj.max_net_bytes);
                 deserializedObj.max_cpu_us = Number(deserializedObj.max_cpu_us);
@@ -293,7 +293,7 @@ export class Api {
             transaction = ser.hexToUint8Array(transaction);
         }
         const deserializedTransaction = this.deserializeTransaction(transaction);
-        const deserializedCFActions = await this.deserializeActions(deserializedTransaction.context_free_actions);
+        const deserializedCFActions = await this.deserializeActions(deserializedTransaction.context_free_actions!);
         const deserializedActions = await this.deserializeActions(deserializedTransaction.actions);
         return {
             ...deserializedTransaction, context_free_actions: deserializedCFActions, actions: deserializedActions
@@ -357,7 +357,7 @@ export class Api {
         }
 
         if ((typeof blocksBehind === 'number' || useLastIrreversible) && expireSeconds) {
-            transaction = await this.generateTapos(info, transaction, blocksBehind, useLastIrreversible, expireSeconds);
+            transaction = await this.generateTapos(info!, transaction, blocksBehind, useLastIrreversible, expireSeconds);
         }
 
         if (!this.hasRequiredTaposFields(transaction)) {
@@ -373,7 +373,7 @@ export class Api {
         };
         transaction = this.deleteTransactionExtensionObjects(transaction);
         const serializedTransaction = this.serializeTransaction(transaction);
-        const serializedContextFreeData = this.serializeContextFreeData(transaction.context_free_data);
+        const serializedContextFreeData = this.serializeContextFreeData(transaction.context_free_data!);
         let pushTransactionArgs: PushTransactionArgs = {
             serializedTransaction, serializedContextFreeData, signatures: []
         };
@@ -442,7 +442,7 @@ export class Api {
                 chainId: this.chainId,
                 requiredKeys,
                 serializedTransaction,
-                serializedContextFreeData: null,
+                serializedContextFreeData: null!,
                 abis,
             });
 
@@ -527,7 +527,7 @@ export class Api {
             return { ...ser.transactionHeader(block, expireSeconds), ...transaction };
         }
 
-        const taposBlockNumber: number = info.head_block_num - blocksBehind;
+        const taposBlockNumber: number = info.head_block_num - blocksBehind!;
 
         const refBlock: GetBlockHeaderStateResult | GetBlockResult | GetBlockInfoResult =
             taposBlockNumber <= info.last_irreversible_block_num
@@ -646,7 +646,7 @@ export class TransactionBuilder {
 export class ActionBuilder {
     private api: Api;
     private readonly accountName: string;
-    public serializedData: ser.SerializedAction;
+    public serializedData: ser.SerializedAction = {} as any;
 
     constructor(api: Api, accountName: string) {
         this.api = api;

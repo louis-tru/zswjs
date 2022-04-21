@@ -35,7 +35,7 @@ export class WebAuthnSignatureProvider implements SignatureProvider {
 
         const signatures = [] as string[];
         for (const key of requiredKeys) {
-            const id = ser.hexToUint8Array(this.keys.get(key));
+            const id = ser.hexToUint8Array(this.keys.get(key)!);
             const assertion = await (navigator as any).credentials.get({
                 publicKey: {
                     timeout: 60000,

@@ -27,12 +27,12 @@ function doEncrypt(msg: any, publicKey: any, cipherMode = 1) {
   const y2 = _.hexToArray(_.leftPad(p.getY().toBigInteger().toRadix(16), 64))
 
   // c3 = hash(x2 || msg || y2)
-  const c3 = _.arrayToHex(sm3([].concat(x2, msg, y2)))
+  const c3 = _.arrayToHex(sm3(([]as number[]).concat(x2, msg, y2)))
 
   let ct = 1
   let offset = 0
   let t: any = [] // 256 位
-  const z = [].concat(x2, y2)
+  const z = ([]as number[]).concat(x2, y2)
   const nextT = () => {
     // (1) Hai = hash(z || ct)
     // (2) ct++
@@ -80,7 +80,7 @@ function doDecrypt(encryptData: any, privateKey: any, cipherMode = 1, {
   let ct = 1
   let offset = 0
   let t: any = [] // 256 位
-  const z = [].concat(x2, y2)
+  const z = ([]as number[]).concat(x2, y2)
   const nextT = () => {
     // (1) Hai = hash(z || ct)
     // (2) ct++
@@ -99,7 +99,7 @@ function doDecrypt(encryptData: any, privateKey: any, cipherMode = 1, {
   }
 
   // c3 = hash(x2 || msg || y2)
-  const checkC3 = _.arrayToHex(sm3([].concat(x2, msg, y2)))
+  const checkC3 = _.arrayToHex(sm3(([]as number[]).concat(x2, msg, y2)))
 
   if (checkC3 === c3) {
     return output === 'array' ? msg : _.arrayToUtf8(msg)

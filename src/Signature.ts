@@ -53,14 +53,14 @@ export class Signature {
 
         let zswchainRecoveryParam;
         if (keyType === KeyType.k1 || keyType === KeyType.r1) {
-            zswchainRecoveryParam = ellipticSig.recoveryParam + 27;
-            if (ellipticSig.recoveryParam <= 3) {
+            zswchainRecoveryParam = ellipticSig.recoveryParam! + 27;
+            if (ellipticSig.recoveryParam! <= 3) {
                 zswchainRecoveryParam += 4;
             }
         } else if (keyType === KeyType.wa) {
             zswchainRecoveryParam = ellipticSig.recoveryParam;
         }
-        const sigData = new Uint8Array([zswchainRecoveryParam].concat(r, s));
+        const sigData = new Uint8Array([zswchainRecoveryParam as number].concat(r, s));
         if (!ec) {
             ec = constructElliptic(keyType);
         }
@@ -82,7 +82,7 @@ export class Signature {
         const r = new BN(this.signature.data.slice(1, lengthOfR + 1));
         const s = new BN(this.signature.data.slice(lengthOfR + 1, lengthOfR + lengthOfS + 1));
 
-        let ellipticRecoveryBitField;
+        let ellipticRecoveryBitField: number;
         if (this.signature.type === KeyType.k1 || this.signature.type === KeyType.r1) {
             ellipticRecoveryBitField = this.signature.data[0] - 27;
             if (ellipticRecoveryBitField > 3) {
@@ -91,7 +91,7 @@ export class Signature {
         } else if (this.signature.type === KeyType.wa) {
             ellipticRecoveryBitField = this.signature.data[0];
         }
-        const recoveryParam = ellipticRecoveryBitField & 3;
+        const recoveryParam = ellipticRecoveryBitField! & 3;
         return { r, s, recoveryParam };
     }
 

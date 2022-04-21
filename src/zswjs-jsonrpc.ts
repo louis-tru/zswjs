@@ -89,7 +89,7 @@ export class JsonRpc implements AuthorityProvider, AbiProvider {
             } else if (json.result && json.result.except) {
                 throw new RpcError(json);
             }
-        } catch (e) {
+        } catch (e: any) {
             e.isFetchError = true;
             throw e;
         }
@@ -135,8 +135,8 @@ export class JsonRpc implements AuthorityProvider, AbiProvider {
         limit = 10,
         search_by_block_num = false,
         reverse = false,
-        lower_bound = null,
-        upper_bound = null,
+        lower_bound = null as any,
+        upper_bound = null as any,
     }: GetActivatedProtocolFeaturesParams): Promise<GetActivatedProtocolFeaturesResult> {
         return await this.fetch('/v1/chain/get_activated_protocol_features', { lower_bound, upper_bound, limit, search_by_block_num, reverse });
     }
@@ -170,7 +170,7 @@ export class JsonRpc implements AuthorityProvider, AbiProvider {
     }
 
     /** Raw call to `/v1/chain/get_currency_balance` */
-    public async get_currency_balance(code: string, account: string, symbol: string = null): Promise<string[]> {
+    public async get_currency_balance(code: string, account: string, symbol: string = null as any): Promise<string[]> {
         return await this.fetch('/v1/chain/get_currency_balance', { code, account, symbol });
     }
 
@@ -361,12 +361,12 @@ export class JsonRpc implements AuthorityProvider, AbiProvider {
     }
 
     /** Raw call to `/v1/history/get_actions` */
-    public async history_get_actions(accountName: string, pos: number = null, offset: number = null): Promise<GetActionsResult> {
+    public async history_get_actions(accountName: string, pos: number = null as any, offset: number = null as any): Promise<GetActionsResult> {
         return await this.fetch('/v1/history/get_actions', { account_name: accountName, pos, offset });
     }
 
     /** Raw call to `/v1/history/get_transaction` */
-    public async history_get_transaction(id: string, blockNumHint: number = null): Promise<GetTransactionResult> {
+    public async history_get_transaction(id: string, blockNumHint: number = null as any): Promise<GetTransactionResult> {
         return await this.fetch('/v1/history/get_transaction', { id, block_num_hint: blockNumHint });
     }
 
